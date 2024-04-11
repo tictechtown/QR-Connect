@@ -1,10 +1,13 @@
 package com.tictechtown.qrconnect.ui
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
+import com.tictechtown.qrconnect.R
 import com.tictechtown.qrconnect.data.LocalQRAccountsDataProvider
 import com.tictechtown.qrconnect.data.QRAccount
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.time.Instant
 
 class HomeViewModel : ViewModel() {
 
@@ -13,41 +16,39 @@ class HomeViewModel : ViewModel() {
     val uiState: StateFlow<HomeUIState> = _uiState
 
     init {
-        initEmailList()
+        initList()
     }
 
-    private fun initEmailList() {
-        val emails = LocalQRAccountsDataProvider.allEmails
+
+    private fun initList() {
         _uiState.value = HomeUIState(
-            emails = emails,
-            selectedEmail = emails.first()
+            accounts = LocalQRAccountsDataProvider.allAccounts,
         )
     }
 
-    fun setSelectedEmail(emailId: Long) {
-        /**
-         * We only set isDetailOnlyOpen to true when it's only single pane layout
-         */
-        val email = uiState.value.emails.find { it.id == emailId }
-        _uiState.value = _uiState.value.copy(
-            selectedEmail = email,
-            isDetailOnlyOpen = true
-        )
+    private fun extractWebsiteFromLink(link: String): String {
+        val uri = Uri.parse(link)
+        return uri.host ?: link
     }
 
-    fun closeDetailScreen() {
-        _uiState.value = _uiState
-            .value.copy(
-                isDetailOnlyOpen = false,
-                selectedEmail = _uiState.value.emails.first()
+    fun addNewAccount(account: String, link: String) {
+
+        _uiState.value = HomeUIState(
+            accounts = _uiState.value.accounts.plus(
+                QRAccount(
+                    id = _uiState.value.accounts.count().toLong(),
+                    website = extractWebsiteFromLink(link),
+                    accountName = account,
+                    link = link,
+                    createdAt = Instant.now().toString(),
+                    websiteLogo = R.drawable.wellfound
+                )
             )
+        )
     }
 }
 
 data class HomeUIState(
-    val emails: List<QRAccount> = emptyList(),
-    val selectedEmail: QRAccount? = null,
-    val isDetailOnlyOpen: Boolean = false,
+    val accounts: List<QRAccount> = emptyList(),
     val loading: Boolean = false,
-    val error: String? = null,
 )

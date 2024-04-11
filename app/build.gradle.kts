@@ -24,6 +24,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -44,16 +45,17 @@ android {
 }
 
 dependencies {
-
+    implementation("androidx.compose.ui:ui-tooling-preview-android:1.6.5")
+    val nav_version = "2.7.7"
     val composeBom = platform("androidx.compose:compose-bom:2024.04.00")
     implementation(composeBom)
+    testImplementation(composeBom)
     androidTestImplementation(composeBom)
 
     // Choose one of the following:
     // Material Design 3
     implementation("androidx.compose.material3:material3")
     // Android Studio Preview support
-    implementation("androidx.compose.ui:ui-tooling-preview")
     debugImplementation("androidx.compose.ui:ui-tooling")
     // UI Tests
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
@@ -68,5 +70,7 @@ dependencies {
 
 
     implementation("com.lightspark:compose-qr-code:1.0.1")
+    implementation("androidx.navigation:navigation-compose:$nav_version")
+
 
 }
