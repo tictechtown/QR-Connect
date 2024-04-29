@@ -41,7 +41,7 @@ class HomeViewModel : ViewModel() {
                     accountName = account,
                     link = link,
                     createdAt = Instant.now().toString(),
-                    websiteLogo = R.drawable.wellfound
+                    websiteLogo = R.drawable.unknown
                 )
             )
         )
