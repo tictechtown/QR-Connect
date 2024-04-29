@@ -5,12 +5,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
@@ -19,13 +27,15 @@ import androidx.compose.ui.Modifier
 fun DetailAppBar(
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit,
+    onDeletePressed: () -> Unit,
 ) {
+
+    var expanded by remember { mutableStateOf(false) }
+
     TopAppBar(modifier = modifier, title = {
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-        }
+            modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+        ) {}
     }, navigationIcon = {
         IconButton(
             onClick = onBackPressed,
@@ -38,7 +48,7 @@ fun DetailAppBar(
         }
     }, actions = {
         IconButton(
-            onClick = { /*Click Implementation*/ },
+            onClick = { expanded = true },
         ) {
             Icon(
                 imageVector = Icons.Default.MoreVert,
@@ -46,6 +56,16 @@ fun DetailAppBar(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenuItem(text = { Text("Delete") },
+                onClick = { onDeletePressed() },
+                leadingIcon = {
+                    Icon(
+                        Icons.Outlined.Delete, contentDescription = null
+                    )
+                })
+        }
+
     })
 }
 

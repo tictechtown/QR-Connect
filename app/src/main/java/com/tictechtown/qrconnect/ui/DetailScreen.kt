@@ -38,6 +38,7 @@ fun DetailScreen(
     account: QRAccount,
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit = {},
+    onDeletePressed: () -> Unit = {},
 ) {
     BackHandler {
         onBackPressed()
@@ -46,7 +47,10 @@ fun DetailScreen(
     UpdateBrightness()
 
     QRAccountDetail(
-        account = account, modifier = modifier.fillMaxSize(), onBackPressed = onBackPressed
+        account = account,
+        modifier = modifier.fillMaxSize(),
+        onBackPressed = onBackPressed,
+        onDeletePressed = onDeletePressed
     )
 }
 
@@ -55,14 +59,13 @@ fun QRAccountDetail(
     account: QRAccount,
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit = {},
+    onDeletePressed: () -> Unit = {},
 ) {
 
     Column(
         modifier = modifier.padding(top = 8.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        DetailAppBar() {
-            onBackPressed()
-        }
+        DetailAppBar(onBackPressed = onBackPressed, onDeletePressed = onDeletePressed)
 
 
         Card(

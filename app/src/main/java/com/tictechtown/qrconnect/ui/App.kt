@@ -28,13 +28,15 @@ import com.tictechtown.qrconnect.ui.theme.rememberSlideDistance
 fun App(
     homeUIState: HomeUIState,
     addNewAccount: (String, String) -> Unit,
+    deleteAccount: (Long) -> Unit,
 ) {
     val navController = rememberNavController()
     Surface {
         AppContent(
             homeUIState = homeUIState,
             navController = navController,
-            addNewAccount = addNewAccount
+            addNewAccount = addNewAccount,
+            deleteAccount = deleteAccount
         )
     }
 }
@@ -46,6 +48,7 @@ fun AppContent(
     homeUIState: HomeUIState,
     navController: NavHostController,
     addNewAccount: (String, String) -> Unit,
+    deleteAccount: (Long) -> Unit,
 ) {
 
     val slideDistance = rememberSlideDistance()
@@ -147,11 +150,19 @@ fun AppContent(
 
 
         ) { backStackEntry ->
+
+            val accId = backStackEntry.arguments?.getLong("qrId")
             DetailScreen(
                 account = homeUIState.accounts.find { account ->
-                    account.id == backStackEntry.arguments?.getLong("qrId")
+                    account.id == accId
                 }!!,
                 onBackPressed = { navController.navigateUp() },
+                onDeletePressed = {
+                    navController.navigateUp()
+                    if (accId != null) {
+                        deleteAccount(accId)
+                    }
+                }
             )
         }
     }
@@ -182,7 +193,8 @@ fun QRAppPreview() {
             homeUIState = HomeUIState(
                 accounts = LocalQRAccountsDataProvider.allAccounts
             ),
-            addNewAccount = { _, _ -> }
+            addNewAccount = { _, _ -> },
+            deleteAccount = {}
         )
     }
 }

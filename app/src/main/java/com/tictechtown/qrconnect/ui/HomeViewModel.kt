@@ -46,6 +46,14 @@ class HomeViewModel : ViewModel() {
             )
         )
     }
+
+    fun deleteAccount(accountId: Long) {
+        _uiState.value = HomeUIState(
+            accounts = _uiState.value.accounts.filter {
+                it.id != accountId
+            }
+        )
+    }
 }
 
 data class HomeUIState(

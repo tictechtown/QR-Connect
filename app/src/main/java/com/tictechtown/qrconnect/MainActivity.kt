@@ -24,12 +24,9 @@ class MainActivity : ComponentActivity() {
 
             AppTheme {
                 Surface() {
-                    App(
-                        homeUIState = uiState,
-                        addNewAccount = {account, link ->
-                            viewModel.addNewAccount(account, link)
-                        }
-                    )
+                    App(homeUIState = uiState, addNewAccount = { account, link ->
+                        viewModel.addNewAccount(account, link)
+                    }, deleteAccount = { viewModel.deleteAccount(it) })
                 }
             }
         }
