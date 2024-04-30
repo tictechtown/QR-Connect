@@ -11,14 +11,20 @@ import com.tictechtown.qrconnect.ui.App
 import com.tictechtown.qrconnect.ui.HomeViewModel
 import com.tictechtown.qrconnect.ui.theme.AppTheme
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.tictechtown.qrconnect.room.DatabaseProvider
 
 class MainActivity : ComponentActivity() {
-    private val viewModel: HomeViewModel by viewModels()
+
+    private lateinit var viewModel: HomeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
-
         super.onCreate(savedInstanceState)
+
+        val database = DatabaseProvider(this).getInstance()
+        viewModel = HomeViewModel(database)
+
+
         setContent {
             val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

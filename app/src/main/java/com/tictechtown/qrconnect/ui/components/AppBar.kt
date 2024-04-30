@@ -21,6 +21,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import com.tictechtown.qrconnect.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,6 +30,7 @@ fun DetailAppBar(
     modifier: Modifier = Modifier,
     onBackPressed: () -> Unit,
     onDeletePressed: () -> Unit,
+    onPrintPressed: () -> Unit,
 ) {
 
     var expanded by remember { mutableStateOf(false) }
@@ -57,13 +60,24 @@ fun DetailAppBar(
             )
         }
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenuItem(text = { Text("Print") },
+                onClick = { expanded = false; onPrintPressed() },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_print),
+                        contentDescription = null
+                    )
+                }
+            )
+
             DropdownMenuItem(text = { Text("Delete") },
-                onClick = { onDeletePressed() },
+                onClick = { expanded = false; onDeletePressed() },
                 leadingIcon = {
                     Icon(
                         Icons.Outlined.Delete, contentDescription = null
                     )
-                })
+                }
+            )
         }
 
     })

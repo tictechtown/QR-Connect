@@ -31,6 +31,9 @@ import com.lightspark.composeqr.QrCodeView
 import com.tictechtown.qrconnect.data.QRAccount
 import com.tictechtown.qrconnect.ui.components.DetailAppBar
 import com.tictechtown.qrconnect.ui.components.ProfileImage
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 
 @Composable
@@ -65,7 +68,12 @@ fun QRAccountDetail(
     Column(
         modifier = modifier.padding(top = 8.dp), horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        DetailAppBar(onBackPressed = onBackPressed, onDeletePressed = onDeletePressed)
+        DetailAppBar(
+            onBackPressed = onBackPressed,
+            onDeletePressed = onDeletePressed,
+            onPrintPressed = {
+                /* TODO */
+            })
 
 
         Card(
@@ -136,8 +144,12 @@ fun QRAccountDetail(
 
         }
 
+
         Text(
-            "Added on ${account.createdAt}",
+            "Added on ${
+                DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withZone(ZoneId.of("UTC"))
+                    .format(account.createdAt)
+            }",
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

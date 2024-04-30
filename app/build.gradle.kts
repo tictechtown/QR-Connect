@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    kotlin("kapt") version "1.9.23"
 }
 
 android {
@@ -46,6 +47,11 @@ android {
 
 dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview-android:1.6.5")
+
+    val room_version = "2.6.1"
+    implementation("androidx.room:room-common:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
     val nav_version = "2.7.7"
     val composeBom = platform("androidx.compose:compose-bom:2024.04.00")
     implementation(composeBom)
@@ -62,7 +68,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
     // Optional - Integration with activities
-    implementation("androidx.activity:activity-compose:1.8.2")
+    implementation("androidx.activity:activity-compose:1.9.0")
 
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
     implementation("androidx.navigation:navigation-compose:2.7.7")

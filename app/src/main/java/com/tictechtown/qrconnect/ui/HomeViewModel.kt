@@ -2,18 +2,25 @@ package com.tictechtown.qrconnect.ui
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.tictechtown.qrconnect.R
 import com.tictechtown.qrconnect.data.LocalQRAccountsDataProvider
 import com.tictechtown.qrconnect.data.QRAccount
+import com.tictechtown.qrconnect.room.Account
+import com.tictechtown.qrconnect.room.AppDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.launch
 import java.time.Instant
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel(private val database: AppDatabase) : ViewModel() {
+
 
     // UI state exposed to the UI
     private val _uiState = MutableStateFlow(HomeUIState(loading = true))
     val uiState: StateFlow<HomeUIState> = _uiState
+
 
     init {
         initList()
@@ -21,38 +28,38 @@ class HomeViewModel : ViewModel() {
 
 
     private fun initList() {
-        _uiState.value = HomeUIState(
-            accounts = LocalQRAccountsDataProvider.allAccounts,
-        )
-    }
 
-    private fun extractWebsiteFromLink(link: String): String {
-        val uri = Uri.parse(link)
-        return uri.host ?: link
+        viewModelScope.launch {
+            database.accountDao().getAllAccounts().collect() { accountList ->
+                _uiState.value = HomeUIState(
+                    accounts = LocalQRAccountsDataProvider.allAccounts + accountList.map {
+                        QRAccount.fromDB(
+                            it
+                        )
+                    },
+                )
+            }
+        }
     }
 
     fun addNewAccount(account: String, link: String) {
-
-        _uiState.value = HomeUIState(
-            accounts = _uiState.value.accounts.plus(
-                QRAccount(
-                    id = _uiState.value.accounts.count().toLong(),
-                    website = extractWebsiteFromLink(link),
-                    accountName = account,
+        viewModelScope.launch {
+            database.accountDao().insertAccount(
+                Account(
+                    id = 0,
+                    name = account,
                     link = link,
                     createdAt = Instant.now().toString(),
-                    websiteLogo = R.drawable.unknown
                 )
             )
-        )
+        }
     }
 
     fun deleteAccount(accountId: Long) {
-        _uiState.value = HomeUIState(
-            accounts = _uiState.value.accounts.filter {
-                it.id != accountId
-            }
-        )
+        viewModelScope.launch {
+            val account = database.accountDao().findAccount(accountId)
+            database.accountDao().deleteAccount(account)
+        }
     }
 }
 
